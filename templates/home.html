@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Job Recommend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+        .filter-form {
+            max-width: 250px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .filter-form h5 {
+            text-align: center;
+            color: #007bff;
+        }
+        .filter-form .form-label {
+            color: #495057;
+        }
+        .filter-form .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .no-jobs-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        .no-jobs-container p {
+            color: #6c757d;
+            font-size: 1.25rem;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .card-title {
+            color: #007bff;
+        }
+        .card-footer {
+            background-color: #ffffff;
+            border-top: none;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div style="position: fixed; top: 0; left: 0; height: 100vh" class="col-md-3 bg-light">
+          <form id="filterForm" class="filter-form" method="POST" action="{% url 'get_job_details' %}">
+            {% csrf_token %}
+            <h5>Filter Jobs</h5>
+            <div class="mb-3">
+              <label for="education" class="form-label">Education Background</label>
+              <select class="form-select" id="education" name="education">
+                <option selected>Select</option>
+                <option value="BCA">BCA</option>
+                <option value="MCA">MCA</option>
+                <option value="BE">BE</option>
+                <option value="ME">ME</option>
+                <!-- Add more options as needed -->
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="skills" class="form-label">Skills</label>
+              <input type="text" class="form-control" id="skills" name="keyword" placeholder="e.g., Python, JavaScript">
+            </div>
+            <div class="mb-3">
+              <label for="experience" class="form-label">Experience (Years)</label>
+              <input type="number" class="form-control" id="experience" name="experience" placeholder="e.g., 2">
+            </div>
+            <div class="mb-3">
+              <label for="currentSalary" class="form-label">Current Salary ($)</label>
+              <input type="number" class="form-control" id="currentSalary" name="currentSalary" placeholder="e.g., 50000">
+            </div>
+            <div class="mb-3">
+              <label for="currentJobStatus" class="form-label">Current Job Status</label>
+              <select class="form-select" id="currentJobStatus" name="currentJobStatus">
+                <option selected>Select</option>
+                <option value="Employed">Employed</option>
+                <option value="Unemployed">Unemployed</option>
+                <option value="Student">Student</option>
+                <!-- Add more options as needed -->
+              </select>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+          </form>
+        </div>
+        <div style="position: absolute; top: 0; left: 320px;" class="col-md-9">
+          <div id="job-recommendations" class="d-flex flex-wrap gap-3">
+            <!-- Job recommendations will be displayed here -->
+            {% if job_details %}
+              {% for job in job_details %}
+                <div class="card mb-3" style="width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text">{{ job.description }}</p>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted">Posted on: {{ job.posted_on }}</small><br>
+                    <small class="text-muted">Company: {{ job.company }}</small><br>
+                    <a href="{{ job.link }}" class="btn btn-primary" target="_blank">View Job</a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-jobs-container">
+                <img class="w-25 h-auto" src="https://img.freepik.com/free-vector/man-having-online-job-interview_52683-43379.jpg?t=st=1719252978~exp=1719256578~hmac=1189b49bebfb041adfeda8aa3c0b3fbd06a1f37a22f2febae57cd40b2860e789&w=740" alt="No job recommendations">
+                <p>No job recommendations to display</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
