@@ -6,6 +6,12 @@ from bs4 import BeautifulSoup
 def home(request):
     return render(request, 'home.html')
 
+def truncate_words(text, num_words):
+    words = text.split()
+    if len(words) > num_words:
+        return ' '.join(words[:num_words]) + '...'
+    return text
+
 def scrape_job_details(keyword):
     base_url = 'https://www.shine.com/job-search/'
     search_url = f'{base_url}{keyword}'
@@ -39,7 +45,9 @@ def scrape_job_details(keyword):
         
             # Extract the job description (assuming it's within a <p> tag or similar identifiable tag)
             description_tag = job_card.find('div', class_='jobCard_skillList__KKExE')
-            job_details['description'] = description_tag.get_text(strip=True) if description_tag else None
+            description = description_tag.get_text(strip=True) if description_tag else None
+            truncated_description = truncate_words(description, 30)
+            job_details['description']=truncated_description
         
             # Add job_details to job_list if it contains any information
             if job_details['title'] or job_details['company']:
